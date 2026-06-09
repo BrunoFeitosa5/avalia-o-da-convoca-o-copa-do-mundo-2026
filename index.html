@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convocação Brasil – Copa 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Quattrocento+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #020c04;
+      --bg2:        #061209;
+      --yellow:     #FEDF00;
+      --yellow-lt:  #FFE94D;
+      --yellow-dim: rgba(254,223,0,0.11);
+      --green:      #009B3A;
+      --green-lt:   #00C44A;
+      --blue:       #002776;
+      --blue-lt:    rgba(0,39,118,0.40);
+      --white:      #f2fff5;
+      --muted:      rgba(242,255,245,0.38);
+      --border:     rgba(254,223,0,0.20);
+    }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 12% 2%,  rgba(0,155,58,0.11) 0%, transparent 50%),
+        radial-gradient(ellipse at 88% 98%, rgba(254,223,0,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(0,39,118,0.05) 0%, transparent 62%);
+      color: var(--white);
+      font-family: 'Quattrocento Sans', Georgia, serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1rem 6rem;
+    }
+
+    .container { width: 100%; max-width: 880px; }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      position: relative;
+    }
+    header::after {
+      content: '';
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 90px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), var(--yellow), var(--green), transparent);
+    }
+
+    .flag-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.4rem;
+      animation: flagBob 4s ease-in-out infinite;
+    }
+    .flag-br {
+      width: 100px;
+      height: auto;
+      border-radius: 4px;
+      filter: drop-shadow(0 6px 22px rgba(0,0,0,0.60)) drop-shadow(0 2px 8px rgba(0,155,58,0.25));
+    }
+    @keyframes flagBob {
+      0%, 100% { transform: translateY(0px) rotate(-0.8deg); }
+      50%       { transform: translateY(-5px) rotate(0.8deg); }
+    }
+
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--green-lt);
+      margin-bottom: 0.65rem;
+    }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      color: var(--white);
+    }
+    h1 span { color: var(--yellow); }
+    .subtitle {
+      margin-top: 0.6rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1.4rem;
+    }
+    .stat { flex: 1; background: var(--bg2); padding: 0.85rem 1rem; text-align: center; }
+    .stat-num {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--yellow);
+      line-height: 1;
+      margin-bottom: 0.28rem;
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── Filter tabs ── */
+    .filter-row {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+    .tab {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.52rem 1.1rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tab::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(105deg, transparent, rgba(255,255,255,0.12), transparent);
+      transition: left 0s; transform: skewX(-15deg); pointer-events: none;
+    }
+    .tab:hover::before { left: 160%; transition: left 0.38s ease; }
+    .tab:hover { border-color: rgba(254,223,0,0.4); color: var(--white); }
+    .tab.active { background: var(--yellow); border-color: var(--yellow); color: #030f06; font-weight: 700; }
+
+    /* ── Grid ── */
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.9rem;
+    }
+    @media (max-width: 600px) { .players-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 340px) { .players-grid { grid-template-columns: 1fr; } }
+
+    /* ── Player card ── */
+    .player-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 0.8rem 1rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.28s cubic-bezier(0.16,1,0.3,1), box-shadow 0.28s, border-color 0.25s;
+      animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    .player-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.5), 0 2px 8px rgba(0,155,58,0.14);
+      border-color: rgba(254,223,0,0.4);
+    }
+
+    /* Top shimmer line on hover */
+    .player-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--green));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .player-card:hover::before { opacity: 1; }
+
+    /* Cursor glow */
+    .player-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at var(--mx, 50%) var(--my, 50%),
+        rgba(254,223,0,0.09) 0%,
+        rgba(0,155,58,0.04) 40%,
+        transparent 65%
+      );
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      border-radius: 10px;
+    }
+    .player-card:hover::after { opacity: 1; }
+    .player-card.hidden { display: none; }
+
+    /* Photo wrapper + spinner */
+    .photo-wrap {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 0.65rem;
+      z-index: 1;
+    }
+    .player-photo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2.5px solid var(--green);
+      display: block;
+      object-fit: cover;
+      transition: border-color 0.25s, box-shadow 0.25s, opacity 0.35s;
+      background: var(--blue);
+    }
+    .player-card:hover .player-photo {
+      border-color: var(--yellow);
+      box-shadow: 0 0 18px rgba(254,223,0,0.28);
+    }
+    .photo-spinner {
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 3px solid rgba(254,223,0,0.12);
+      border-top-color: var(--yellow);
+      border-right-color: var(--green);
+      animation: spin 0.75s linear infinite;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.4s;
+    }
+    .photo-spinner.done { opacity: 0; animation: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Position badge */
+    .pos-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      padding: 0.14rem 0.52rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 0.42rem;
+      position: relative;
+      z-index: 1;
+    }
+    .pos-GOL { background: rgba(0,39,118,0.5);  color: #7abcff; border: 1px solid rgba(122,188,255,0.3); }
+    .pos-DEF { background: rgba(0,155,58,0.22); color: var(--green-lt); border: 1px solid rgba(0,155,58,0.4); }
+    .pos-MEI { background: rgba(254,223,0,0.14); color: var(--yellow-lt); border: 1px solid rgba(254,223,0,0.36); }
+    .pos-ATA { background: rgba(220,50,50,0.2); color: #ff9090; border: 1px solid rgba(220,50,50,0.38); }
+
+    .player-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      line-height: 1.3;
+      margin-bottom: 0.2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .player-club {
+      font-size: 0.64rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Stars ── */
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 0.2rem;
+      margin-bottom: 0.38rem;
+      position: relative;
+      z-index: 1;
+    }
+    .star {
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: rgba(254,223,0,0.18);
+      transition: color 0.1s, transform 0.12s;
+      line-height: 1;
+      user-select: none;
+    }
+    .star.lit  { color: var(--yellow); }
+    .star:hover { transform: scale(1.3); }
+
+    .rating-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      min-height: 0.85rem;
+      position: relative;
+      z-index: 1;
+      transition: color 0.2s;
+      color: var(--muted);
+    }
+
+    /* ── Section dividers in grid ── */
+    .section-divider {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin: 0.6rem 0 0.2rem;
+    }
+    .section-divider span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .section-divider .sd-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .sd-GOL { color: #7abcff; }
+    .sd-DEF { color: var(--green-lt); }
+    .sd-MEI { color: var(--yellow-lt); }
+    .sd-ATA { color: #ff9090; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="flag-wrapper">
+      <svg class="flag-br" viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="210" fill="#009B3A" rx="3"/>
+        <polygon points="150,14 286,105 150,196 14,105" fill="#FEDF00"/>
+        <circle cx="150" cy="105" r="57" fill="#002776"/>
+        <path d="M94,93 Q150,108 206,93" fill="none" stroke="white" stroke-width="11" stroke-linecap="round"/>
+        <path id="tp" d="M96,95.5 Q150,110.5 204,95.5" fill="none"/>
+        <text fill="#009B3A" font-family="Arial Narrow,Arial,sans-serif" font-weight="bold" font-size="7.8" letter-spacing="0.55">
+          <textPath href="#tp" startOffset="50%" text-anchor="middle">ORDEM E PROGRESSO</textPath>
+        </text>
+        <text x="150" y="68"  font-size="13" fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="131" y="81"  font-size="8"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="164" y="77"  font-size="9"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="139" y="93"  font-size="7"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="168" y="90"  font-size="11" fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="116" y="107" font-size="7"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="183" y="111" font-size="8"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="130" y="121" font-size="6"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="174" y="124" font-size="6"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+        <text x="149" y="130" font-size="5"  fill="white" text-anchor="middle" dominant-baseline="middle">★</text>
+      </svg>
+    </div>
+    <p class="eyebrow">Copa do Mundo 2026 · México · EUA · Canadá</p>
+    <h1>Lista de <span>Convocação</span></h1>
+    <p class="subtitle">Seleção Brasileira · 26 Jogadores · Avalie de 0 a 5 estrelas</p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-num">26</span>
+      <span class="stat-label">Convocados</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="rated-count">0</span>
+      <span class="stat-label">Avaliados</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="avg-rating">—</span>
+      <span class="stat-label">Média ★</span>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <button class="tab active" data-filter="TODOS">Todos (26)</button>
+    <button class="tab" data-filter="GOL">Goleiros (3)</button>
+    <button class="tab" data-filter="DEF">Defensores (8)</button>
+    <button class="tab" data-filter="MEI">Meio-campistas (6)</button>
+    <button class="tab" data-filter="ATA">Atacantes (9)</button>
+  </div>
+
+  <div class="players-grid" id="grid"></div>
+
+</div>
+
+<script>
+  const RATINGS_KEY = 'copa2026-ratings-v1';
+
+  const players = [
+    // Goleiros
+    { id: 'alisson',        nome: 'Alisson',          pos: 'GOL', clube: 'Liverpool' },
+    { id: 'ederson-gk',     nome: 'Ederson',          pos: 'GOL', clube: 'Fenerbahçe' },
+    { id: 'weverton',       nome: 'Weverton',         pos: 'GOL', clube: 'Grêmio' },
+    // Defensores
+    { id: 'alex-sandro',    nome: 'Alex Sandro',      pos: 'DEF', clube: 'Flamengo' },
+    { id: 'bremer',         nome: 'Bremer',           pos: 'DEF', clube: 'Juventus' },
+    { id: 'danilo',         nome: 'Danilo',           pos: 'DEF', clube: 'Flamengo' },
+    { id: 'douglas-santos', nome: 'Douglas Santos',   pos: 'DEF', clube: 'Zenit' },
+    { id: 'gabriel-m',      nome: 'Gabriel Magalhães',pos: 'DEF', clube: 'Arsenal' },
+    { id: 'ibanez',         nome: 'Ibañez',           pos: 'DEF', clube: 'Al-Ahli' },
+    { id: 'leo-pereira',    nome: 'Léo Pereira',      pos: 'DEF', clube: 'Flamengo' },
+    { id: 'marquinhos',     nome: 'Marquinhos',       pos: 'DEF', clube: 'Paris Saint-Germain' },
+    // Meio-campistas
+    { id: 'brunao',         nome: 'Bruno Guimarães',  pos: 'MEI', clube: 'Newcastle United' },
+    { id: 'casemiro',       nome: 'Casemiro',         pos: 'MEI', clube: 'Manchester United' },
+    { id: 'danilo-santos',  nome: 'Danilo Santos',    pos: 'MEI', clube: 'Botafogo' },
+    { id: 'ederson-mid',    nome: 'Éderson',          pos: 'MEI', clube: 'Atalanta' },
+    { id: 'fabinho',        nome: 'Fabinho',          pos: 'MEI', clube: 'Al-Ittihad' },
+    { id: 'paqueta',        nome: 'Lucas Paquetá',    pos: 'MEI', clube: 'Flamengo' },
+    // Atacantes
+    { id: 'endrick',        nome: 'Endrick',          pos: 'ATA', clube: 'Lyon' },
+    { id: 'martinelli',     nome: 'Gabriel Martinelli',pos: 'ATA', clube: 'Arsenal' },
+    { id: 'igor-thiago',    nome: 'Igor Thiago',      pos: 'ATA', clube: 'Brentford' },
+    { id: 'luiz-henrique',  nome: 'Luiz Henrique',    pos: 'ATA', clube: 'Zenit' },
+    { id: 'matheus-cunha',  nome: 'Matheus Cunha',    pos: 'ATA', clube: 'Manchester United' },
+    { id: 'neymar',         nome: 'Neymar',           pos: 'ATA', clube: 'Santos' },
+    { id: 'raphinha',       nome: 'Raphinha',         pos: 'ATA', clube: 'Barcelona' },
+    { id: 'rayan',          nome: 'Rayan',            pos: 'ATA', clube: 'Bournemouth' },
+    { id: 'vini',           nome: 'Vinícius Júnior',  pos: 'ATA', clube: 'Real Madrid' },
+  ];
+
+  const ratingMeta = [
+    { label: 'Rejeição Máxima',      color: '#ff3d3d' },
+    { label: 'Rejeição Quase Total', color: '#ff6b35' },
+    { label: 'Ruim',                 color: '#ff9800' },
+    { label: 'Regular',              color: '#ffc107' },
+    { label: 'Boa',                  color: '#8bc34a' },
+    { label: 'Aprovação Máxima',     color: '#00c44a' },
+  ];
+
+  // Avatar SVG inline — position-themed colors, works offline
+  const avatarBg = {
+    GOL: ['#001d5e', '#003299'],
+    DEF: ['#003d18', '#006b2a'],
+    MEI: ['#3d2800', '#704b00'],
+    ATA: ['#4d0010', '#8a001c'],
+  };
+
+  function initials(nome) {
+    const skip = new Set(['de','da','do','dos','das','e']);
+    const parts = nome.trim().split(/\s+/).filter(p => !skip.has(p.toLowerCase()));
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  function avatarURL(player) {
+    const ini = initials(player.nome);
+    const [c1, c2] = avatarBg[player.pos] || avatarBg.GOL;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g)"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="30" font-weight="bold" fill="#FEDF00">${ini}</text></svg>`;
+    return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  }
+
+  // Títulos dos artigos na Wikipedia (en.wikipedia.org) — verificados
+  const wikiTitles = {
+    'alisson':        'Alisson Becker',
+    'ederson-gk':     'Ederson (footballer, born 1993)',
+    'weverton':       'Weverton (footballer, born 1987)',
+    'alex-sandro':    'Alex Sandro',
+    'bremer':         'Gleison Bremer',
+    'danilo':         'Danilo (footballer, born July 1991)',   // "July" necessário — sem ele pega outro Danilo
+    'douglas-santos': 'Douglas Santos (footballer, born 1994)',
+    'gabriel-m':      'Gabriel Magalhães',
+    'ibanez':         'Roger Ibáñez',
+    'leo-pereira':    'Léo Pereira',
+    'marquinhos':     'Marquinhos',
+    'brunao':         'Bruno Guimarães',
+    'casemiro':       'Casemiro',
+    'danilo-santos':  'Danilo (footballer, born 2001)',        // Meia do Botafogo
+    'ederson-mid':    'Éderson (footballer, born 1999)',
+    'fabinho':        'Fabinho (footballer, born 1993)',
+    'paqueta':        'Lucas Paquetá',
+    'endrick':        'Endrick (footballer, born 2006)',
+    'martinelli':     'Gabriel Martinelli',
+    'igor-thiago':    'Igor Thiago',
+    'luiz-henrique':  'Luiz Henrique (footballer, born 2001)',
+    'matheus-cunha':  'Matheus Cunha',
+    'neymar':         'Neymar',
+    'raphinha':       'Raphinha',
+    'rayan':          'Rayan (footballer, born 2006)',
+    'vini':           'Vinícius Júnior',
+  };
+
+  // Termos de busca alternativos para a 5ª estratégia (jogadores com pouca cobertura)
+  const wikiSearchTerms = {
+    'alisson':        'Alisson Becker Brazil goalkeeper Liverpool',
+    'ederson-gk':     'Ederson Moraes goalkeeper Brazil born 1993 Manchester City Fenerbahce',
+    'weverton':       'Weverton Wash Fiore goalkeeper Brazil Palmeiras',
+    'alex-sandro':    'Alex Sandro Lobo Silva Brazil left back',
+    'bremer':         'Gleison Bremer Juventus Brazil defender',
+    'danilo':         'Danilo Luiz da Silva Brazil right back',
+    'douglas-santos': 'Douglas Santos Brazil defender born 1994',
+    'gabriel-m':      'Gabriel Magalhães Arsenal Brazil centre back',
+    'ibanez':         'Roger Ibáñez footballer Brazil AS Roma Al-Ahli defender born 1999',
+    'leo-pereira':    'Léo Pereira Leonardo Gomes Pereira Flamengo Brazil defender born 1996',
+    'marquinhos':     'Marquinhos Brazil PSG captain defender',
+    'brunao':         'Bruno Guimarães Newcastle United Brazil midfielder',
+    'casemiro':       'Casemiro Brazil midfielder Manchester United',
+    'danilo-santos':  'Danilo Santos Brazil Botafogo midfielder born 2001',
+    'ederson-mid':    'Éderson Atalanta Brazil midfielder born 1999',
+    'fabinho':        'Fabinho Brazil Al-Ittihad midfielder born 1993',
+    'paqueta':        'Lucas Paquetá Brazil midfielder West Ham',
+    'endrick':        'Endrick Brazil Real Madrid forward born 2006',
+    'martinelli':     'Gabriel Martinelli Arsenal Brazil winger',
+    'igor-thiago':    'Igor Thiago Brazil Brentford forward',
+    'luiz-henrique':  'Luiz Henrique Brazil forward born 2001 Botafogo',
+    'matheus-cunha':  'Matheus Cunha Manchester United Brazil forward',
+    'neymar':         'Neymar Brazil Santos forward',
+    'raphinha':       'Raphinha Barcelona Brazil winger',
+    'rayan':          'Rayan Brazil Bournemouth forward born 2006',
+    'vini':           'Vinícius Júnior Real Madrid Brazil forward',
+  };
+  // Links fixos fornecidos para garantir foto correta desses três jogadores
+  const wikiPageLinkOverride = {
+    'bremer':      'https://pt.wikipedia.org/wiki/Bremer',
+    'ibanez':      'https://pt.wikipedia.org/wiki/Roger_Iba%C3%B1ez',
+    'ederson-mid': 'https://pt.wikipedia.org/wiki/%C3%89derson_Jos%C3%A9_dos_Santos_Louren%C3%A7o_da_Silva',
+  };
+
+  // Busca direta no Wikidata por nome — para jogadores onde o título Wikipedia é ambíguo
+  const wikidataSearchOverride = {
+    'ibanez':     'Roger Ibáñez',
+    'ederson-gk': 'Ederson Moraes',
+    'bremer':     'Gleison Bremer',
+  };
+  async function getImageByWikiPageLink(pageLink) {
+    try {
+      const pageURL = new URL(pageLink);
+      if (!/wikipedia\.org$/i.test(pageURL.hostname)) return null;
+      const title = decodeURIComponent(pageURL.pathname.replace(/^\/wiki\//, '')).replace(/_/g, ' ');
+      if (!title) return null;
+
+      const r = await fetch(
+        pageURL.origin + '/w/api.php?action=query&redirects=1' +
+        '&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*' +
+        '&titles=' + encodeURIComponent(title)
+      );
+      if (!r.ok) return null;
+      const d = await r.json();
+      const page = Object.values(d?.query?.pages || {})[0];
+      if (page && page.missing === undefined && page?.thumbnail?.source) {
+        return page.thumbnail.source;
+      }
+    } catch {}
+    return null;
+  }
+
+  async function getImageByWikidataSearch(name) {
+    try {
+      const r = await fetch(
+        'https://www.wikidata.org/w/api.php?action=wbsearchentities' +
+        '&search=' + encodeURIComponent(name) +
+        '&language=en&type=item&limit=5&format=json&origin=*'
+      );
+      if (!r.ok) return null;
+      const d = await r.json();
+      for (const entity of (d.search || [])) {
+        const desc = (entity.description || '').toLowerCase();
+        if (!/football|soccer|goalkeeper|keeper|defender|midfielder|forward|striker|winger|player/.test(desc)) continue;
+        try {
+          const r2 = await fetch(
+            'https://www.wikidata.org/w/api.php?action=wbgetclaims' +
+            '&entity=' + entity.id + '&property=P18&format=json&origin=*'
+          );
+          if (!r2.ok) continue;
+          const d2 = await r2.json();
+          const fname = d2.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+          if (!fname) continue;
+          const url = 'https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/' +
+            encodeURIComponent(fname.replace(/ /g, '_')) + '&width=400';
+          await new Promise((res, rej) => {
+            const t = new Image(); t.onload = res; t.onerror = rej; t.src = url;
+          });
+          return url;
+        } catch {}
+      }
+    } catch {}
+    return null;
+  }
+
+  // Fila de carregamento — evita disparar 26 requisições simultâneas e ser bloqueado por rate-limit
+  const photoQueue = [];
+  let photoQueueBusy = false;
+
+  function queuePhotoLoad(id, img, spinner) {
+    photoQueue.push({ id, img, spinner });
+    processPhotoQueue();
+  }
+
+  async function processPhotoQueue() {
+    if (photoQueueBusy || !photoQueue.length) return;
+    photoQueueBusy = true;
+    while (photoQueue.length > 0) {
+      const { id, img, spinner } = photoQueue.shift();
+      loadWikiPhoto(id, img, spinner); // dispara sem await — carregamentos rodam em paralelo
+      if (photoQueue.length > 0) await new Promise(r => setTimeout(r, 150));
+    }
+    photoQueueBusy = false;
+  }
+
+  // Busca foto com 7 estratégias em cascata
+  async function loadWikiPhoto(id, img, spinner) {
+    const done = () => { if (spinner) spinner.classList.add('done'); };
+    const title = wikiTitles[id];
+    if (!title) { done(); return; }
+
+    let src = null;
+    // 0. Prioriza links explícitos fornecidos pelo usuário (Wikipedia PT)
+    if (wikiPageLinkOverride[id]) {
+      src = await getImageByWikiPageLink(wikiPageLinkOverride[id]);
+    }
+
+    // Override: busca direta no Wikidata por nome para jogadores com título Wikipedia problemático
+    if (!src && wikidataSearchOverride[id]) {
+      src = await getImageByWikidataSearch(wikidataSearchOverride[id]);
+    }
+    // 1. Wikidata P18 via pageprops Wikipedia (apenas para jogadores sem override)
+    //    Valida inline: só aceita se a imagem realmente carrega no Commons.
+    if (!src && !wikidataSearchOverride[id]) {
+      try {
+        const rp = await fetch(
+          'https://en.wikipedia.org/w/api.php?action=query&redirects=1' +
+          '&prop=pageprops&format=json&origin=*' +
+          '&titles=' + encodeURIComponent(title)
+        );
+        if (rp.ok) {
+          const dp = await rp.json();
+          const pp = Object.values(dp?.query?.pages || {})[0];
+          const qid = pp?.pageprops?.wikibase_item;
+          if (qid) {
+            const rw = await fetch(
+              'https://www.wikidata.org/w/api.php?action=wbgetclaims' +
+              '&entity=' + qid + '&property=P18&format=json&origin=*'
+            );
+            if (rw.ok) {
+              const dw = await rw.json();
+              const claim = dw.claims?.P18?.[0];
+              const fname = claim?.mainsnak?.datavalue?.value;
+              if (fname) {
+                const candidate = 'https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/' +
+                  encodeURIComponent(fname.replace(/ /g, '_')) + '&width=400';
+                // Valida: se carregar, aceita; se falhar, cai para próxima estratégia
+                await new Promise((res, rej) => {
+                  const t = new Image(); t.onload = res; t.onerror = rej; t.src = candidate;
+                });
+                src = candidate;
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // 2. REST API — thumbnail do infobox Wikipedia
+    if (!src) {
+      try {
+        const r = await fetch(
+          'https://en.wikipedia.org/api/rest_v1/page/summary/' +
+          encodeURIComponent(title)
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const raw = d.thumbnail?.source;
+          if (raw) src = raw.replace(/\/\d+px-/, '/400px-');
+        }
+      } catch {}
+    }
+
+    // 3. MediaWiki API com pilicense=any (captura fotos com uso justo)
+    if (!src) {
+      try {
+        const r = await fetch(
+          'https://en.wikipedia.org/w/api.php?action=query&redirects=1' +
+          '&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*' +
+          '&titles=' + encodeURIComponent(title)
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const page = Object.values(d?.query?.pages || {})[0];
+          if (page && page.missing === undefined)
+            src = page?.thumbnail?.source;
+        }
+      } catch {}
+    }
+
+    // 4. Wikipedia PT — melhor cobertura para jogadores brasileiros
+    if (!src) {
+      try {
+        const r = await fetch(
+          'https://pt.wikipedia.org/w/api.php?action=query&redirects=1' +
+          '&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*' +
+          '&titles=' + encodeURIComponent(title)
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const page = Object.values(d?.query?.pages || {})[0];
+          if (page && page.missing === undefined)
+            src = page?.thumbnail?.source;
+        }
+      } catch {}
+    }
+
+    // 5. action=parse + imageinfo (extrai primeira imagem real do artigo)
+    if (!src) {
+      try {
+        const r = await fetch(
+          'https://en.wikipedia.org/w/api.php?action=parse&redirects=1' +
+          '&prop=images&format=json&origin=*' +
+          '&page=' + encodeURIComponent(title)
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const file = (d.parse?.images || []).find(f =>
+            /\.(jpg|jpeg|png|webp)$/i.test(f) && !/logo|kit|badge|crest|flag|coat|shield|jersey/i.test(f)
+          );
+          if (file) {
+            const r2 = await fetch(
+              'https://en.wikipedia.org/w/api.php?action=query' +
+              '&prop=imageinfo&iiprop=url&iiurlwidth=400&format=json&origin=*' +
+              '&titles=File:' + encodeURIComponent(file)
+            );
+            if (r2.ok) {
+              const d2 = await r2.json();
+              const fp = Object.values(d2?.query?.pages || {})[0];
+              src = fp?.imageinfo?.[0]?.thumburl;
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // 6. Wikipedia Search API — para jogadores onde o título exato não bate
+    if (!src) {
+      try {
+        const searchTerm = wikiSearchTerms[id] || title;
+        const r = await fetch(
+          'https://en.wikipedia.org/w/api.php?action=query&list=search' +
+          '&srsearch=' + encodeURIComponent(searchTerm) +
+          '&srlimit=3&srprop=&format=json&origin=*'
+        );
+        if (r.ok) {
+          const d = await r.json();
+          const hits = d.query?.search || [];
+          for (const hit of hits) {
+            if (src) break;
+            try {
+              const r2 = await fetch(
+                'https://en.wikipedia.org/w/api.php?action=query&redirects=1' +
+                '&prop=pageimages&format=json&pithumbsize=400&pilicense=any&origin=*' +
+                '&pageids=' + hit.pageid
+              );
+              if (r2.ok) {
+                const d2 = await r2.json();
+                const page = Object.values(d2?.query?.pages || {})[0];
+                if (page?.thumbnail?.source) src = page.thumbnail.source;
+              }
+            } catch {}
+          }
+        }
+      } catch {}
+    }
+
+    if (!src) { done(); return; }
+
+    // Valida a imagem como img.src (sem CORS) antes de exibir
+    try {
+      await new Promise((res, rej) => {
+        const tmp = new Image();
+        tmp.onload = res; tmp.onerror = rej; tmp.src = src;
+      });
+      img.style.opacity = '0';
+      await new Promise(res => setTimeout(res, 320));
+      img.src = src;
+      img.style.opacity = '1';
+      done();
+    } catch { done(); }
+  }
+
+  // State
+  let ratings = {};
+  try { ratings = JSON.parse(localStorage.getItem(RATINGS_KEY)) || {}; } catch {}
+  let activeFilter = 'TODOS';
+
+  function saveRatings() { localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings)); }
+
+  function updateStars(starsDiv, r) {
+    starsDiv.querySelectorAll('.star').forEach((s, i) => {
+      s.classList.toggle('lit', r !== null && i < r);
+    });
+  }
+
+  function updateLabel(labelEl, r) {
+    if (r === null || r === undefined) {
+      labelEl.textContent = '';
+      labelEl.style.color = 'var(--muted)';
+    } else {
+      labelEl.textContent = ratingMeta[r].label;
+      labelEl.style.color = ratingMeta[r].color;
+    }
+  }
+
+  function updateStats() {
+    const ids = Object.keys(ratings);
+    document.getElementById('rated-count').textContent = ids.length;
+    if (ids.length) {
+      const avg = (ids.reduce((s, id) => s + ratings[id], 0) / ids.length).toFixed(1);
+      document.getElementById('avg-rating').textContent = avg;
+    } else {
+      document.getElementById('avg-rating').textContent = '—';
+    }
+  }
+
+  function buildCard(player, delay) {
+    const r = ratings[player.id] ?? null;
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.dataset.pos = player.pos;
+    card.style.animationDelay = delay + 's';
+
+    // Photo wrapper + spinner
+    const wrap = document.createElement('div');
+    wrap.className = 'photo-wrap';
+    const img = document.createElement('img');
+    img.className = 'player-photo';
+    img.src = avatarURL(player);
+    img.alt = player.nome;
+    const spinner = document.createElement('div');
+    spinner.className = 'photo-spinner';
+    wrap.appendChild(img);
+    wrap.appendChild(spinner);
+    queuePhotoLoad(player.id, img, spinner);
+    card.appendChild(wrap);
+
+    // Position badge
+    const badge = document.createElement('div');
+    badge.className = `pos-badge pos-${player.pos}`;
+    badge.textContent = player.pos;
+    card.appendChild(badge);
+
+    // Name
+    const nameEl = document.createElement('div');
+    nameEl.className = 'player-name';
+    nameEl.textContent = player.nome;
+    card.appendChild(nameEl);
+
+    // Club
+    const clubEl = document.createElement('div');
+    clubEl.className = 'player-club';
+    clubEl.textContent = player.clube;
+    card.appendChild(clubEl);
+
+    // Stars
+    const starsDiv = document.createElement('div');
+    starsDiv.className = 'star-rating';
+
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement('span');
+      star.className = 'star';
+      star.textContent = '★';
+
+      star.addEventListener('mouseenter', () => {
+        starsDiv.querySelectorAll('.star').forEach((s, idx) => s.classList.toggle('lit', idx < i));
+      });
+
+      star.addEventListener('click', () => {
+        const cur = ratings[player.id] ?? null;
+        ratings[player.id] = cur === i ? 0 : i;
+        saveRatings();
+        updateStars(starsDiv, ratings[player.id]);
+        updateLabel(labelEl, ratings[player.id]);
+        updateStats();
+      });
+
+      starsDiv.appendChild(star);
+    }
+
+    starsDiv.addEventListener('mouseleave', () => updateStars(starsDiv, ratings[player.id] ?? null));
+    updateStars(starsDiv, r);
+    card.appendChild(starsDiv);
+
+    // Label
+    const labelEl = document.createElement('div');
+    labelEl.className = 'rating-label';
+    updateLabel(labelEl, r);
+    card.appendChild(labelEl);
+
+    // Cursor glow tracking
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
+      card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
+    });
+
+    return card;
+  }
+
+  function buildDivider(pos, label) {
+    const div = document.createElement('div');
+    div.className = 'section-divider';
+    div.dataset.pos = pos;
+    div.innerHTML = `<div class="sd-line"></div><span class="sd-${pos}">${label}</span><div class="sd-line"></div>`;
+    return div;
+  }
+
+  function applyFilter(filter) {
+    activeFilter = filter;
+    document.querySelectorAll('.player-card, .section-divider').forEach(el => {
+      if (filter === 'TODOS') {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.toggle('hidden', el.dataset.pos !== filter);
+      }
+    });
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.filter === filter));
+  }
+
+  // Render grid
+  const grid = document.getElementById('grid');
+  const sections = [
+    { pos: 'GOL', label: 'Goleiros' },
+    { pos: 'DEF', label: 'Defensores' },
+    { pos: 'MEI', label: 'Meio-campistas' },
+    { pos: 'ATA', label: 'Atacantes' },
+  ];
+
+  let globalDelay = 0;
+  sections.forEach(sec => {
+    grid.appendChild(buildDivider(sec.pos, sec.label));
+    players.filter(p => p.pos === sec.pos).forEach(p => {
+      grid.appendChild(buildCard(p, globalDelay * 0.045));
+      globalDelay++;
+    });
+  });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => applyFilter(tab.dataset.filter));
+  });
+
+  updateStats();
+</script>
+</body>
+</html>
