@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Convocação Brasil – Copa 2026</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Quattrocento+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -481,6 +482,19 @@
       margin-top: 0.75rem;
     }
     .vb-seg { height: 100%; transition: width 0.4s ease; }
+
+    .community-stats {
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: 0.18rem;
+      margin-bottom: 0.55rem;
+      min-height: 0.85rem;
+      position: relative;
+      z-index: 1;
+      transition: color 0.2s;
+    }
+    .community-stats .cs-avg { color: var(--yellow-lt); }
   </style>
 </head>
 <body>
@@ -584,7 +598,18 @@
 </div>
 
 <script>
+  const SUPABASE_URL  = 'https://buofxaotsdcqkdgevmug.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1b2Z4YW90c2RjcWtkZ2V2bXVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMzIzMTIsImV4cCI6MjA5NjYwODMxMn0.VehopzXuOdD5jSMTYLtngv3KmUsb_85RhjjMu2-T004';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
   const RATINGS_KEY = 'copa2026-ratings-v1';
+  const VOTER_KEY   = 'copa2026-voter-id';
+  function getVoterId() {
+    let id = localStorage.getItem(VOTER_KEY);
+    if (!id) { id = crypto.randomUUID(); localStorage.setItem(VOTER_KEY, id); }
+    return id;
+  }
+  const voterId = getVoterId();
 
   const players = [
     // Goleiros
@@ -1002,10 +1027,35 @@
   let ratings = {};
   try { ratings = JSON.parse(localStorage.getItem(RATINGS_KEY)) || {}; } catch {}
   let activeFilter = 'TODOS';
+  let communityRatings = {};
 
-  function saveRatings() {
+  function updateCommunityDisplay() {
+    players.forEach(p => {
+      const el = document.getElementById('cs-' + p.id);
+      if (!el) return;
+      const c = communityRatings[p.id];
+      if (!c) { el.innerHTML = '<span style="opacity:0.3">sem votos ainda</span>'; return; }
+      el.innerHTML = `Comunidade: <span class="cs-avg">${c.avg}★</span> · ${c.count} voto${c.count !== 1 ? 's' : ''}`;
+    });
+  }
+
+  function saveRatings(playerId, stars) {
     localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings));
     updatePanel();
+    (async () => {
+      try {
+        if (!stars) {
+          await db.from('ratings').delete()
+            .eq('player_id', playerId).eq('voter_id', voterId);
+        } else {
+          await db.from('ratings').upsert(
+            { player_id: playerId, voter_id: voterId, stars, updated_at: new Date().toISOString() },
+            { onConflict: 'player_id,voter_id' }
+          );
+        }
+        await loadCommunityRatings();
+      } catch {}
+    })();
   }
 
   function updateStars(starsDiv, r) {
@@ -1081,9 +1131,17 @@
     clubEl.textContent = player.clube;
     card.appendChild(clubEl);
 
+    // Community stats
+    const communityEl = document.createElement('div');
+    communityEl.className = 'community-stats';
+    communityEl.id = 'cs-' + player.id;
+    communityEl.innerHTML = '<span style="opacity:0.4">carregando...</span>';
+    card.appendChild(communityEl);
+
     // Stars
     const starsDiv = document.createElement('div');
     starsDiv.className = 'star-rating';
+    starsDiv.dataset.pid = player.id;
 
     for (let i = 1; i <= 5; i++) {
       const star = document.createElement('span');
@@ -1097,7 +1155,7 @@
       star.addEventListener('click', () => {
         const cur = ratings[player.id] ?? null;
         ratings[player.id] = cur === i ? 0 : i;
-        saveRatings();
+        saveRatings(player.id, ratings[player.id]);
         updateStars(starsDiv, ratings[player.id]);
         updateLabel(labelEl, ratings[player.id]);
         updateStats();
@@ -1173,13 +1231,19 @@
     let totalStars = 0, ratedCount = 0;
     const starCounts = [0, 0, 0, 0, 0, 0];
 
+    const hasCommunity = Object.keys(communityRatings).length > 0;
     players.forEach(p => {
-      const r = ratings[p.id];
-      if (r === undefined || r === null || r === 0) return;
+      const comm = communityRatings[p.id];
+      const own  = ratings[p.id];
+      const r = hasCommunity
+        ? (comm ? Math.round(parseFloat(comm.avg)) : null)
+        : (own || null);
+      if (!r) return;
       ratedCount++;
       totalStars += r;
       if (r >= 1 && r <= 5) starCounts[r]++;
-      const item = { nome: p.nome, stars: r };
+      const votes = comm ? ` (${comm.count}v)` : '';
+      const item = { nome: p.nome + votes, stars: r };
       if (r >= 4)      approved.push(item);
       else if (r >= 2) regular.push(item);
       else             rejected.push(item);
@@ -1243,8 +1307,65 @@
     });
   }
 
+  async function loadCommunityRatings() {
+    try {
+      const { data, error } = await db.from('community_ratings').select('*');
+      if (error || !data) return;
+      communityRatings = {};
+      data.forEach(row => {
+        communityRatings[row.player_id] = {
+          avg: String(row.avg_stars),
+          count: Number(row.vote_count)
+        };
+      });
+      updateCommunityDisplay();
+      updatePanel();
+    } catch {}
+  }
+
+  async function loadOwnRatings() {
+    try {
+      const { data, error } = await db.from('ratings').select('player_id, stars').eq('voter_id', voterId);
+      if (error || !data) return;
+      data.forEach(row => { ratings[row.player_id] = row.stars; });
+      updateStats();
+      updatePanel();
+      document.querySelectorAll('.star-rating').forEach(starsDiv => {
+        const pid = starsDiv.dataset.pid;
+        if (!pid) return;
+        const r = ratings[pid] ?? null;
+        starsDiv.querySelectorAll('.star').forEach((s, i) => {
+          s.classList.toggle('lit', r !== null && i < r);
+        });
+        const labelEl = starsDiv.nextElementSibling;
+        if (labelEl && labelEl.classList.contains('rating-label')) updateLabel(labelEl, r);
+      });
+    } catch {}
+  }
+
+  async function migrateLocalRatings() {
+    const MIGRATED_KEY = 'copa2026-migrated-v1';
+    if (localStorage.getItem(MIGRATED_KEY)) return;
+    const local = JSON.parse(localStorage.getItem(RATINGS_KEY)) || {};
+    const entries = Object.entries(local).filter(([, s]) => s > 0);
+    if (entries.length) {
+      try {
+        await db.from('ratings').upsert(
+          entries.map(([player_id, stars]) => ({
+            player_id, voter_id: voterId, stars,
+            updated_at: new Date().toISOString()
+          })),
+          { onConflict: 'player_id,voter_id' }
+        );
+      } catch {}
+    }
+    localStorage.setItem(MIGRATED_KEY, '1');
+  }
+
   updateStats();
   updatePanel();
+  loadCommunityRatings();
+  migrateLocalRatings().then(() => loadOwnRatings());
 </script>
 </body>
 </html>
