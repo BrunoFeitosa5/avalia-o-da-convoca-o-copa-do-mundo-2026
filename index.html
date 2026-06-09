@@ -562,11 +562,11 @@
         <div class="ap-body" id="col-approved"></div>
       </div>
       <div class="ap-col">
-        <div class="ap-header ap-header-regular">⚠️ Regulares (2–3★)</div>
+        <div class="ap-header ap-header-regular">⚠️ Regulares (3★)</div>
         <div class="ap-body" id="col-regular"></div>
       </div>
       <div class="ap-col">
-        <div class="ap-header ap-header-rejected">❌ Rejeitados (0–1★)</div>
+        <div class="ap-header ap-header-rejected">❌ Rejeitados (0–2★)</div>
         <div class="ap-body" id="col-rejected"></div>
       </div>
     </div>
@@ -1244,9 +1244,9 @@
       if (r >= 1 && r <= 5) starCounts[r]++;
       const votes = comm ? ` (${comm.count}v)` : '';
       const item = { nome: p.nome + votes, stars: r };
-      if (r >= 4)      approved.push(item);
-      else if (r >= 2) regular.push(item);
-      else             rejected.push(item);
+      if (r >= 4)       approved.push(item);
+      else if (r === 3) regular.push(item);
+      else              rejected.push(item);
     });
 
     approved.sort((a, b) => b.stars - a.stars);
